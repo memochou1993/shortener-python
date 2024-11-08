@@ -1,5 +1,7 @@
+import os
+
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from nanoid import generate
 
 from schema.link import LinkCreateRequest, LinkCreateResponse
@@ -8,6 +10,12 @@ app = FastAPI()
 
 
 links = dict()
+
+
+@app.get("/", tags=["Static"], response_class=HTMLResponse)
+def read_root():
+    with open(os.path.join("static", "index.html"), "r") as file:
+        return HTMLResponse(content=file.read())
 
 
 @app.post("/api/links", tags=["Link"], response_model=LinkCreateResponse)

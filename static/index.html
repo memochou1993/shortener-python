@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL Shortener</title>
+  <style>
+    .container {
+      display: flex;
+      margin-bottom: 16px;
+      max-width: 100%;
+      width: 400px;
+    }
+    #input, #output {
+      margin-right: 8px;
+      overflow: auto;
+      width: 100%;
+    }
+    button {
+      width: 100px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Welcome to the URL Shortener</h1>
+  <div class="container">
+    <input id="input" type="text">
+    <button id="shorten">Shorten</button>
+  </div>
+  <div class="container">
+    <span id="output"></span>
+    <button id="copy" hidden>Copy</button>
+  </div>
+  <script>
+    const input = document.querySelector('#input');
+    const output = document.querySelector('#output');
+    const shortenButton = document.querySelector('#shorten');
+    const copyButton = document.querySelector('#copy');
+
+    shortenButton.addEventListener('click', async () => {
+      const link = input.value;
+      try {
+        const response = await fetch('/api/links', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ link })
+        });
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.detail[0].msg);
+        }
+        const url = `${window.location.origin}/${data.code}`;
+        output.innerHTML = `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+        copyButton.hidden = false;
+      } catch (err) {
+        console.error(err);
+        output.textContent = 'An error occurred. Please try again.';
+        copyButton.hidden = true;
+      }
+    });
+
+    copyButton.addEventListener('click', () => {
+      const url = output.querySelector('a').href;
+      navigator.clipboard.writeText(url);
+    });
+  </script>
+</body>
+</html>
