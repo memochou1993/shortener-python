@@ -1,8 +1,8 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, HttpUrl
 
 
 class LinkCreateRequest(BaseModel):
-    link: str
+    link: HttpUrl
 
 
 class LinkCreateResponse(BaseModel):
