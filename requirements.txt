@@ -1,3 +1,5 @@
 fastapi[standard]
 ruff
 nanoid
+supabase
+python-dotenv
